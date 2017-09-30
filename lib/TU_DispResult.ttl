@@ -1,0 +1,66 @@
+; #############################################################################
+call Mod_Value
+call Main
+call Log_Show
+call Log_Write
+exit
+; #############################################################################
+
+
+
+; #############################################################################
+; [!] ログ結果Messageを生成
+:Main
+;{
+	if (fail_count == 0) then
+		strconcat msg_Content "OK\n"
+	else
+		strconcat msg_Content "FAIL\n"
+	endif
+	
+	strconcat msg_Content Target_File
+	strconcat msg_Content '\n'
+	
+	strconcat msg_Content total_count_str
+	strconcat msg_Content " Test, "
+	strconcat msg_Content success_count_str
+	strconcat msg_Content " Success, "
+	strconcat msg_Content fail_count_str
+	strconcat msg_Content " Failure. \n"
+	strconcat msg_Content '\n'
+	
+	strconcat msg_Content '-------------------------\n'
+	strconcat msg_Content 'Failed Tests:\n'
+	strconcat msg_Content msg_failed
+	
+	strspecial msg_Content ; Convert \n ⇒ 改行
+	return
+;}
+; ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+; [!] カウント数値を文字列に加工
+:Mod_Value
+;{
+	int2str success_count_str success_count
+	int2str total_count_str total_count
+	int2str fail_count_str fail_count
+	return
+;}
+; ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+; [!] 結果をMsgbox表示
+:Log_Show
+;{
+	messagebox msg_Content '[Test Summary]'
+	return
+;}
+; ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+; [!] 結果をLog出力
+:Log_Write
+;{
+	getdate TL_Filename "TestResult-%Y%m%d%H%M%S.log"
+	makepath TL_File LOG_DIR TL_Filename
+	filecreate TLH TL_File
+	filewrite TLH msg_Content
+	fileclose TLH
+	return
+;}
+; ### End of TTL ##############################################################

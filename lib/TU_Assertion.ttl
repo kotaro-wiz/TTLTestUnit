@@ -1,0 +1,62 @@
+; #############################################################################
+; [!] Mode選択
+; Mod-Code
+strcompare aCmd "Eq"
+if (result == 0) asCode = 1
+strcompare aCmd "nEq"
+if (result == 0) asCode = 2
+
+; Select
+if (asCode == 1) then
+	call Assert_Equal
+elseif (asCode == 2) then
+	call Assert_NotEqual
+endif
+
+exit
+; #############################################################################
+
+
+
+; #############################################################################
+; [!] アサーション（Equal）
+:Assert_Equal
+;{
+	strcompare aExp aAct
+	if (result == 0) then
+		success_count = success_count + 1
+	else
+		fail_count = fail_count + 1
+		call Create_FailMessage
+	endif
+	total_count = total_count + 1
+	return
+;}
+; ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+; [!] アサーション（NotEqual）
+:Assert_NotEqual
+;{
+	strcompare aExp aAct
+	if (result != 0) then
+		success_count = success_count + 1
+	else
+		fail_count = fail_count + 1
+		call Create_FailMessage
+	endif
+	total_count = total_count + 1
+	return
+;}
+; ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+; [!] エラー結果を作成
+:Create_FailMessage
+;{
+	sprintf '[%d]' aNo
+	strconcat msg_failed inputstr
+	strconcat msg_failed Target_File
+	strconcat msg_failed '\n'
+	sprintf 'Expect: %s Actual: %s timeout(%d)' aExp aAct timeout
+	strconcat msg_failed inputstr
+	strconcat msg_failed '\n'
+	return
+;}
+; ### End of TTL ##############################################################
